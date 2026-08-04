@@ -193,8 +193,8 @@ export function Dashboard() {
                                             <td className="py-3 text-center">
                                                 <span
                                                     className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold border ${tx.status === 'Concluído'
-                                                            ? 'bg-emerald-50 dark:bg-emerald-950/20 text-[#10b981] border-emerald-100 dark:border-emerald-900/40'
-                                                            : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/40'
+                                                        ? 'bg-emerald-50 dark:bg-emerald-950/20 text-[#10b981] border-emerald-100 dark:border-emerald-900/40'
+                                                        : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/40'
                                                         }`}
                                                 >
                                                     {tx.status === 'Concluído' ? 'Pago' : 'Pendente'}
@@ -211,7 +211,7 @@ export function Dashboard() {
                 {/* Botões de Navegação */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 pt-2">
                     <button
-                        onClick={() => navigate('/lancamentos')}
+                        onClick={() => navigate('/transacoes')}
                         className="w-full rounded-lg bg-[#ED9BDB] hover:bg-[#e483d0] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-pink-100 dark:shadow-none hover:shadow-pink-200/50 transition-all text-center"
                     >
                         Acessar Parcelas & Lançamentos

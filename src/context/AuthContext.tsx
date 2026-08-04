@@ -16,19 +16,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // 1. Verifica se já existe uma sessão ativa ao carregar o app
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
+        let isMounted = true;
 
-        // 2. Escuta mudanças no estado de autenticação (login, logout, etc.)
+        async function initializeAuth() {
+            try {
+                // 1. Verifica se já existe uma sessão ativa
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    if (isMounted) {
+                        setUser(session.user);
+                        setLoading(false);
+                    }
+                    return;
+                }
+
+                // 2. Se não houver sessão ativa, tenta login automático
+                const autoEmail = import.meta.env.VITE_AUTO_LOGIN_EMAIL;
+                const autoPassword = import.meta.env.VITE_AUTO_LOGIN_PASSWORD;
+
+                if (autoEmail && autoPassword) {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: autoEmail,
+                        password: autoPassword,
+                    });
+
+                    if (error) {
+                        console.error('Falha no login automático:', error.message);
+                    } else if (data?.user) {
+                        if (isMounted) {
+                            setUser(data.user);
+                        }
+                    }
+                } else {
+                    console.warn(
+                        'Login automático não configurado no .env.local (adicione VITE_AUTO_LOGIN_EMAIL e VITE_AUTO_LOGIN_PASSWORD).'
+                    );
+                }
+            } catch (err) {
+                console.error('Erro na inicialização da autenticação:', err);
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        initializeAuth();
+
+        // 3. Escuta mudanças no estado de autenticação
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
+            if (isMounted) {
+                setUser(session?.user ?? null);
+            }
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            isMounted = false;
+            subscription.unsubscribe();
+        };
     }, []);
 
     const signOut = async () => {
