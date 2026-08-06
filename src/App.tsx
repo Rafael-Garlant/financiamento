@@ -34,7 +34,7 @@ function AppContent() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/categorias" element={<Categories />} />
         <Route path="/transacoes" element={<Transactions />} />
-        <Route path="/login" element={<Login />} />
+        {/* <Route path="/login" element={<Login />} /> */}
       </Routes>
     </BrowserRouter>
   );
